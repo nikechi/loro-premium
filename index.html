@@ -688,6 +688,13 @@
     <!-- Columna derecha: Botones de sonido y AR -->
     <div class="action-buttons-vertical">
       <div class="button-wrapper">
+        <button data-info="sonido" onclick="toggleSonido()">
+          <img src="images/sonido.png" alt="Sonido" id="btnSonidoImg">
+        </button>
+        <span>Sonido</span>
+      </div>
+
+      <div class="button-wrapper">
         <button class="ar-button" data-info="ar" onclick="activarModoAR()" id="btnAR">
           <img src="images/AR.png" alt="AR" id="btnARImg">
         </button>
@@ -759,7 +766,7 @@
 
     let dragging = false;
     let lastX = 0;
-    let rotationY = 0;
+    let rotationY = 2;
     let zoom = 4;
     const cameraY = 0.5;
 
