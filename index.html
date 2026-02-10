@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <title>Perico Barbinaranja - Visualizador 3D</title>
+  <title>Iguana Verde - Visualizador 3D</title>
   <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/webxr-polyfill@latest/build/webxr-polyfill.min.js"></script>
 
@@ -199,6 +199,63 @@
     font-size: 11px;
     color: #666;
     line-height: 1.4;
+  }
+
+  /* Notificación inicial de instrucciones */
+  #notificacionInicial {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 255, 255, 0.95);
+    color: #333;
+    padding: 25px 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    z-index: 10000;
+    max-width: 90%;
+    width: 400px;
+    text-align: center;
+  }
+
+  #notificacionInicial h3 {
+    margin: 0 0 15px 0;
+    color: #034732;
+    font-size: 20px;
+  }
+
+  #notificacionInicial p {
+    margin: 10px 0;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  #btnEntendido {
+    margin-top: 20px;
+    padding: 12px 30px;
+    background: #469352;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+
+  #btnEntendido:hover {
+    background: #357a3d;
+  }
+
+  /* Overlay oscuro detrás de la notificación */
+  #overlayInicial {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 9999;
   }
 
   #audioPanel {
@@ -492,6 +549,18 @@
 
 <body>
 
+<!-- Overlay de la notificación inicial -->
+<div id="overlayInicial"></div>
+
+<!-- Notificación inicial de instrucciones -->
+<div id="notificacionInicial">
+  <h3>📱 Instrucciones de Navegación</h3>
+  <p><strong>PC:</strong> WASD: Mover | Arrastrar: Rotar | Rueda: Zoom</p>
+  <p><strong>Móvil:</strong> Deslizar: Rotar | Pinch: Zoom</p>
+  <p><strong>AR:</strong> Detección de superficies y colocación táctil</p>
+  <button id="btnEntendido" onclick="cerrarNotificacionInicial()">Entendido</button>
+</div>
+
 <!-- Indicador de superficie -->
 <div id="surfaceIndicator"></div>
 
@@ -619,12 +688,6 @@
     <!-- Columna derecha: Botones de sonido y AR -->
     <div class="action-buttons-vertical">
       <div class="button-wrapper">
-        <button data-info="sonido" onclick="toggleSonido()">
-          <img src="images/sonido.png" alt="Sonido" id="btnSonidoImg">
-        </button>
-        <span>Sonido</span>
-      </div>
-      <div class="button-wrapper">
         <button class="ar-button" data-info="ar" onclick="activarModoAR()" id="btnAR">
           <img src="images/AR.png" alt="AR" id="btnARImg">
         </button>
@@ -640,11 +703,6 @@
     
     <div id="infoContent" style="display: none;"></div>
     
-    <div id="instrucciones">
-      <strong>PC:</strong> WASD: Mover | Arrastrar: Rotar | Rueda: Zoom<br>
-      <strong>Móvil:</strong> Deslizar: Rotar | Pinch: Zoom<br>
-      <strong>AR:</strong> Detección de superficies y colocación táctil
-    </div>
   </div>
 
   <!-- Panel de audio -->
@@ -677,6 +735,17 @@
   let reticleVisible = false;
   let lastHitPose = null;
 
+
+  // ========================================
+  // NOTIFICACIÓN INICIAL
+  // ========================================
+  function cerrarNotificacionInicial() {
+    const notificacion = document.getElementById('notificacionInicial');
+    const overlay = document.getElementById('overlayInicial');
+    
+    if (notificacion) notificacion.style.display = 'none';
+    if (overlay) overlay.style.display = 'none';
+  }
   // ========================================
   // CONTROL DE ROTACIÓN Y ZOOM (MODO NORMAL)
   // ========================================
@@ -690,9 +759,9 @@
 
     let dragging = false;
     let lastX = 0;
-    let rotationY = 1;
-    let zoom = 3;
-    const cameraY = 6;
+    let rotationY = 0;
+    let zoom = 4;
+    const cameraY = 0.5;
 
     // ===== EVENTOS DE MOUSE =====
     window.addEventListener('mousedown', e => {
